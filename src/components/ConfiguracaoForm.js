@@ -23,7 +23,7 @@ const ConfiguracaoForm = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-           Authorization: `Bearer ${token}`, // Token in Authorization header
+           authorization: `Bearer ${token}`, // Token in Authorization header
         },
         body: JSON.stringify(data), // No userId here, it will be added by the backend
       });
@@ -75,9 +75,9 @@ const ConfiguracaoForm = () => {
                   label="Tipo de Prova"
                   variant="filled"
                   fullWidth
-                  {...register('tipo_prova', { required: 'Tipo de Prova é obrigatório' })}
-                  error={!!errors.tipo_prova}
-                  helperText={errors.tipo_prova?.message}
+                  {...register('tipoProva', { required: 'Tipo de Prova é obrigatório' })}
+                  error={!!errors.tipoProva}
+                  helperText={errors.tipoProva?.message}
                 />
               </Grid>
 
@@ -89,9 +89,9 @@ const ConfiguracaoForm = () => {
                     type="number"
                     variant="filled"
                     fullWidth
-                    {...register('peso_aroma', { required: 'Peso Aroma é obrigatório' })}
-                    error={!!errors.peso_aroma}
-                    helperText={errors.peso_aroma?.message}
+                    {...register('pesoAroma', { required: 'Peso Aroma é obrigatório' })}
+                    error={!!errors.pesoAroma}
+                    helperText={errors.pesoAroma?.message}
                   />
                 </Grid>
                 <Grid item xs={3}>
@@ -100,9 +100,9 @@ const ConfiguracaoForm = () => {
                     type="number"
                     variant="filled"
                     fullWidth
-                    {...register('peso_cor', { required: 'Peso Cor é obrigatório' })}
-                    error={!!errors.peso_cor}
-                    helperText={errors.peso_cor?.message}
+                    {...register('pesoCor', { required: 'Peso Cor é obrigatório' })}
+                    error={!!errors.pesoCor}
+                    helperText={errors.pesoCor?.message}
                   />
                 </Grid>
                 <Grid item xs={3}>
@@ -111,9 +111,9 @@ const ConfiguracaoForm = () => {
                     type="number"
                     variant="filled"
                     fullWidth
-                    {...register('peso_sabor', { required: 'Peso Sabor é obrigatório' })}
-                    error={!!errors.peso_sabor}
-                    helperText={errors.peso_sabor?.message}
+                    {...register('pesoSabor', { required: 'Peso Sabor é obrigatório' })}
+                    error={!!errors.pesoSabor}
+                    helperText={errors.pesoSabor?.message}
                   />
                 </Grid>
                 <Grid item xs={3}>
@@ -122,9 +122,9 @@ const ConfiguracaoForm = () => {
                     type="number"
                     variant="filled"
                     fullWidth
-                    {...register('peso_corpo', { required: 'Peso Corpo é obrigatório' })}
-                    error={!!errors.peso_corpo}
-                    helperText={errors.peso_corpo?.message}
+                    {...register('pesoCorpo', { required: 'Peso Corpo é obrigatório' })}
+                    error={!!errors.pesoCorpo}
+                    helperText={errors.pesoCorpo?.message}
                   />
                 </Grid>
               </Grid>
@@ -137,9 +137,9 @@ const ConfiguracaoForm = () => {
                     type="number"
                     variant="filled"
                     fullWidth
-                    {...register('peso_persistencia', { required: 'Peso Persistência é obrigatório' })}
-                    error={!!errors.peso_persistencia}
-                    helperText={errors.peso_persistencia?.message}
+                    {...register('pesoPersistencia', { required: 'Peso Persistência é obrigatório' })}
+                    error={!!errors.pesoPersistencia}
+                    helperText={errors.pesoPersistencia?.message}
                   />
                 </Grid>
                 <Grid item xs={3}>
@@ -148,22 +148,22 @@ const ConfiguracaoForm = () => {
                     type="number"
                     variant="filled"
                     fullWidth
-                    {...register('numero_participantes', { required: 'Número de Participantes é obrigatório' })}
-                    error={!!errors.numero_participantes}
-                    helperText={errors.numero_participantes?.message}
+                    {...register('numeroParticipantes', { required: 'Número de Participantes é obrigatório' })}
+                    error={!!errors.numeroParticipantes}
+                    helperText={errors.numeroParticipantes?.message}
                   />
                 </Grid>
                 <Grid item xs={6}>
                   <FormControlLabel
-                    control={<Checkbox {...register('guias_degustacao')} />}
+                    control={<Checkbox {...register('guiasDegustacao')} />}
                     label="Guias de Degustação"
                   />
                   <FormControlLabel
-                    control={<Checkbox {...register('dicas_temperatura')} />}
+                    control={<Checkbox {...register('dicasTemperatura')} />}
                     label="Dicas de Temperatura"
                   />
                   <FormControlLabel
-                    control={<Checkbox {...register('sugestoes_acompanhamento')} />}
+                    control={<Checkbox {...register('sugestoesAcompanhamento')} />}
                     label="Sugestões de Acompanhamento"
                   />
                 </Grid>
@@ -175,9 +175,9 @@ const ConfiguracaoForm = () => {
                   label="Nível de Apreciação"
                   variant="filled"
                   fullWidth
-                  {...register('nivel_apreciacao', { required: 'Nível de Apreciação é obrigatório' })}
-                  error={!!errors.nivel_apreciacao}
-                  helperText={errors.nivel_apreciacao?.message}
+                  {...register('nivelApreciacao', { required: 'Nível de Apreciação é obrigatório' })}
+                  error={!!errors.nivelApreciacao}
+                  helperText={errors.nivelApreciacao?.message}
                 />
               </Grid>
 
@@ -187,9 +187,9 @@ const ConfiguracaoForm = () => {
                   label="Tipos de Vinho"
                   variant="filled"
                   fullWidth
-                  {...register('tipos_vinho', { required: 'Tipos de Vinho são obrigatórios' })}
-                  error={!!errors.tipos_vinho}
-                  helperText={errors.tipos_vinho?.message}
+                  {...register('tipoVinho', { required: 'Tipos de Vinho são obrigatórios' })}
+                  error={!!errors.tipoVinho}
+                  helperText={errors.tipoVinho?.message}
                 />
               </Grid>
 
@@ -199,9 +199,9 @@ const ConfiguracaoForm = () => {
                   label="Métodos de Degustação"
                   variant="filled"
                   fullWidth
-                  {...register('metodos_degustacao', { required: 'Métodos de Degustação são obrigatórios' })}
-                  error={!!errors.metodos_degustacao}
-                  helperText={errors.metodos_degustacao?.message}
+                  {...register('metodosDegustacao', { required: 'Métodos de Degustação são obrigatórios' })}
+                  error={!!errors.metodosDegustacao}
+                  helperText={errors.metodosDegustacao?.message}
                 />
               </Grid>
 
@@ -211,9 +211,9 @@ const ConfiguracaoForm = () => {
                   label="Duração da Prova"
                   variant="filled"
                   fullWidth
-                  {...register('duracao_prova', { required: 'Duração da Prova é obrigatória' })}
-                  error={!!errors.duracao_prova}
-                  helperText={errors.duracao_prova?.message}
+                  {...register('duracaoProva', { required: 'Duração da Prova é obrigatória' })}
+                  error={!!errors.duracaoProva}
+                  helperText={errors.duracaoProva?.message}
                 />
               </Grid>
 
