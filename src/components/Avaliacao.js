@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios, {postForm} from "axios";
 import {
   Table,
   TableBody,
@@ -12,38 +12,178 @@ import {
   CircularProgress,
   Box,
   IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+  Grid,
 } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
+import { useForm } from "react-hook-form";
+
+const AvaliacaoDialog = ({ open, onClose, configuracaoId }) => {
+  const { register, handleSubmit, formState: { errors } } = useForm();
+
+  const onSubmit = async (data) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("User não autenticado.");
+        return;
+      }
+
+      const response = await fetch("http://localhost:3000/api/v1/avaliacao", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ ...data, configuracaoId }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro ao criar avaliação.");
+      }
+
+      alert("Avaliação criada com sucesso!");
+      onClose(); // Close dialog on successful submission
+    } catch (error) {
+      console.error("Erro ao criar avaliação:", error);
+      alert("Erro ao criar avaliação.");
+    }
+  };
+
+  return (
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+      <DialogTitle align={"center"} >Avaliar Prova</DialogTitle>
+      <DialogContent >
+        <form onSubmit={handleSubmit(onSubmit)} >
+          <Grid container spacing={3} paddingTop={2}>
+            <Grid item xs={12}>
+              <TextField
+                label="Peso Aroma"
+                type="number"
+                fullWidth
+                {...register("pesoAroma", { required: "Peso Aroma é obrigatório" })}
+                error={!!errors.pesoAroma}
+                helperText={errors.pesoAroma?.message}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Peso Cor"
+                type="number"
+                fullWidth
+                {...register("pesoCor", { required: "Peso Cor é obrigatório" })}
+                error={!!errors.pesoCor}
+                helperText={errors.pesoCor?.message}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Peso Sabor"
+                type="number"
+                fullWidth
+                {...register("pesoSabor", { required: "Peso Sabor é obrigatório" })}
+                error={!!errors.pesoSabor}
+                helperText={errors.pesoSabor?.message}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Peso Corpo"
+                type="number"
+                fullWidth
+                {...register("pesoCorpo", { required: "Peso Corpo é obrigatório" })}
+                error={!!errors.pesoCorpo}
+                helperText={errors.pesoCorpo?.message}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Peso Persistência"
+                type="number"
+                fullWidth
+                {...register("pesoPersistencia", { required: "Peso Persistência é obrigatório" })}
+                error={!!errors.pesoPersistencia}
+                helperText={errors.pesoPersistencia?.message}
+              />
+            </Grid>
+          </Grid>
+          <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
+            Enviar Avaliação
+          </Button>
+        </form>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} color="secondary">Cancelar</Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
 
 const Avaliacao = () => {
   const [configuracoes, setConfiguracoes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedConfiguracaoId, setSelectedConfiguracaoId] = useState(null);
+  const [avaliacoesByTheUser, setAvaliacoes] = useState([]);
+
+
 
   useEffect(() => {
     const fetchConfiguracoes = async () => {
       try {
+          try {
+            const theResp = await axios.get("http://localhost:3000/api/v1/avaliacao", {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            });
+            const avaliacoesByTheUser = theResp.data.filter(
+              (config) => config.userId === localStorage.getItem("userId")
+            );
+
+            // Use the filtered data instead of the entire response
+            setAvaliacoes(avaliacoesByTheUser);
+            setLoading(false);
+          } catch (error) {
+            console.error("Error fetching avaliacoes:", error);
+            setLoading(false);
+          }
+
         const response = await axios.get("http://localhost:3000/api/v1/configuracao", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-        const unfinishedConfiguracoes = response.data.filter(
-          (config) => config.finalizado === false
-        );
-        setConfiguracoes(response.data);
+
+        const unfinishedConfiguracoes = response.data.filter((config) => {
+          return config.finalizado === "false" && !avaliacoesByTheUser.some(
+            (avaliacao) => avaliacao.configuracaoId === config._id
+          );
+        });
+
+        setConfiguracoes(unfinishedConfiguracoes);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching configuracoes:", error);
         setLoading(false);
       }
     };
-
     fetchConfiguracoes();
   }, []);
 
   const handleAvaliarClick = (id) => {
-    console.log("Avaliar clicked for configuracao ID:", id);
-    // Add navigation or evaluation logic here.
+    setSelectedConfiguracaoId(id);
+    setDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+    setSelectedConfiguracaoId(null);
   };
 
   if (loading) {
@@ -63,7 +203,7 @@ const Avaliacao = () => {
     <Box
       display="flex"
       justifyContent="center"
-      sx={{ minHeight: "100vh", bgcolor: "#f9f9f9", padding: 3 }}
+      sx={{ minHeight: "91vh", bgcolor: "#f9f9f9", padding: 3 }}
     >
       <TableContainer
         component={Paper}
@@ -72,6 +212,8 @@ const Avaliacao = () => {
           padding: 3,
           boxShadow: 3,
           borderRadius: 2,
+          height: "70vh",
+          overflowY: 'auto',
         }}
       >
         <Typography
@@ -114,6 +256,12 @@ const Avaliacao = () => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <AvaliacaoDialog
+        open={dialogOpen}
+        onClose={handleCloseDialog}
+        configuracaoId={selectedConfiguracaoId}
+      />
     </Box>
   );
 };

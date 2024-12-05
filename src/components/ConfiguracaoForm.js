@@ -68,9 +68,19 @@ const ConfiguracaoForm = () => {
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Grid container spacing={3}>
-
               {/* Tipo de Prova */}
-              <Grid item xs={12}>
+              <Grid item xs={8}>
+                <TextField
+                  label="Nome da Prova"
+                  variant="filled"
+                  fullWidth
+                  {...register('nomeProva', { required: 'Tipo de Prova é obrigatório' })}
+                  error={!!errors.nomeProva}
+                  helperText={errors.nomeProva?.message}
+                />
+              </Grid>
+              {/* Tipo de Prova */}
+              <Grid item xs={4}>
                 <TextField
                   label="Tipo de Prova"
                   variant="filled"
@@ -184,7 +194,7 @@ const ConfiguracaoForm = () => {
               {/* Tipos de Vinho */}
               <Grid item xs={12}>
                 <TextField
-                  label="Tipos de Vinho"
+                  label="Tipo do Vinho"
                   variant="filled"
                   fullWidth
                   {...register('tipoVinho', { required: 'Tipos de Vinho são obrigatórios' })}
