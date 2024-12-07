@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios, {postForm} from "axios";
+import axios from "axios";
 import {
   Table,
   TableBody,
@@ -48,7 +48,7 @@ const AvaliacaoDialog = ({ open, onClose, configuracaoId }) => {
       }
 
       alert("Avaliação criada com sucesso!");
-      onClose(); // Close dialog on successful submission
+      onClose();
     } catch (error) {
       console.error("Erro ao criar avaliação:", error);
       alert("Erro ao criar avaliação.");
@@ -57,60 +57,22 @@ const AvaliacaoDialog = ({ open, onClose, configuracaoId }) => {
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle align={"center"} >Avaliar Prova</DialogTitle>
-      <DialogContent >
-        <form onSubmit={handleSubmit(onSubmit)} >
+      <DialogTitle align={"center"}>Avaliar Prova</DialogTitle>
+      <DialogContent>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={3} paddingTop={2}>
-            <Grid item xs={12}>
-              <TextField
-                label="Peso Aroma"
-                type="number"
-                fullWidth
-                {...register("pesoAroma", { required: "Peso Aroma é obrigatório" })}
-                error={!!errors.pesoAroma}
-                helperText={errors.pesoAroma?.message}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Peso Cor"
-                type="number"
-                fullWidth
-                {...register("pesoCor", { required: "Peso Cor é obrigatório" })}
-                error={!!errors.pesoCor}
-                helperText={errors.pesoCor?.message}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Peso Sabor"
-                type="number"
-                fullWidth
-                {...register("pesoSabor", { required: "Peso Sabor é obrigatório" })}
-                error={!!errors.pesoSabor}
-                helperText={errors.pesoSabor?.message}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Peso Corpo"
-                type="number"
-                fullWidth
-                {...register("pesoCorpo", { required: "Peso Corpo é obrigatório" })}
-                error={!!errors.pesoCorpo}
-                helperText={errors.pesoCorpo?.message}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Peso Persistência"
-                type="number"
-                fullWidth
-                {...register("pesoPersistencia", { required: "Peso Persistência é obrigatório" })}
-                error={!!errors.pesoPersistencia}
-                helperText={errors.pesoPersistencia?.message}
-              />
-            </Grid>
+            {["pesoAroma", "pesoCor", "pesoSabor", "pesoCorpo", "pesoPersistencia"].map((field, index) => (
+              <Grid item xs={12} key={index}>
+                <TextField
+                  label={field.replace("peso", "Peso ")}
+                  type="number"
+                  fullWidth
+                  {...register(field, { required: `${field} é obrigatório` })}
+                  error={!!errors[field]}
+                  helperText={errors[field]?.message}
+                />
+              </Grid>
+            ))}
           </Grid>
           <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
             Enviar Avaliação
@@ -126,54 +88,53 @@ const AvaliacaoDialog = ({ open, onClose, configuracaoId }) => {
 
 const Avaliacao = () => {
   const [configuracoes, setConfiguracoes] = useState([]);
+  const [avaliacoesByTheUser, setAvaliacoes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedConfiguracaoId, setSelectedConfiguracaoId] = useState(null);
-  const [avaliacoesByTheUser, setAvaliacoes] = useState([]);
-
-
 
   useEffect(() => {
-    const fetchConfiguracoes = async () => {
+    const fetchData = async () => {
       try {
-          try {
-            const theResp = await axios.get("http://localhost:3000/api/v1/avaliacao", {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            });
-            const avaliacoesByTheUser = theResp.data.filter(
-              (config) => config.userId === localStorage.getItem("userId")
-            );
+        setLoading(true);
 
-            // Use the filtered data instead of the entire response
-            setAvaliacoes(avaliacoesByTheUser);
-            setLoading(false);
-          } catch (error) {
-            console.error("Error fetching avaliacoes:", error);
-            setLoading(false);
-          }
+        const token = localStorage.getItem("token");
+        const userId = localStorage.getItem("userId");
+        if (!token || !userId) {
+          alert("User não autenticado.");
+          setLoading(false);
+          return;
+        }
 
-        const response = await axios.get("http://localhost:3000/api/v1/configuracao", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        const [avaliacoesResp, configuracoesResp] = await Promise.all([
+          axios.get("http://localhost:3000/api/v1/avaliacao", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          axios.get("http://localhost:3000/api/v1/configuracao", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
 
-        const unfinishedConfiguracoes = response.data.filter((config) => {
-          return config.finalizado === "false" && !avaliacoesByTheUser.some(
-            (avaliacao) => avaliacao.configuracaoId === config._id
-          );
-        });
+        const avaliacoes = avaliacoesResp.data.filter(
+          (avaliacao) => avaliacao.userId === userId
+        );
 
+        const unfinishedConfiguracoes = configuracoesResp.data.filter(
+          (config) =>
+            config.finalizado === "false" &&
+            !avaliacoes.some((avaliacao) => avaliacao.configuracaoId === config._id)
+        );
+
+        setAvaliacoes(avaliacoes);
         setConfiguracoes(unfinishedConfiguracoes);
-        setLoading(false);
       } catch (error) {
-        console.error("Error fetching configuracoes:", error);
+        console.error("Error fetching data:", error);
+      } finally {
         setLoading(false);
       }
     };
-    fetchConfiguracoes();
+
+    fetchData();
   }, []);
 
   const handleAvaliarClick = (id) => {
@@ -188,23 +149,14 @@ const Avaliacao = () => {
 
   if (loading) {
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="100vh"
-      >
+      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
         <CircularProgress />
       </Box>
     );
   }
 
   return (
-    <Box
-      display="flex"
-      justifyContent="center"
-      sx={{ minHeight: "91vh", bgcolor: "#f9f9f9", padding: 3 }}
-    >
+    <Box display="flex" justifyContent="center" sx={{ minHeight: "91vh", bgcolor: "#f9f9f9", padding: 3 }}>
       <TableContainer
         component={Paper}
         sx={{
@@ -213,7 +165,7 @@ const Avaliacao = () => {
           boxShadow: 3,
           borderRadius: 2,
           height: "70vh",
-          overflowY: 'auto',
+          overflowY: "auto",
         }}
       >
         <Typography
@@ -244,10 +196,7 @@ const Avaliacao = () => {
                 <TableCell>{config.localizacao}</TableCell>
                 <TableCell>{config.duracaoProva}</TableCell>
                 <TableCell>
-                  <IconButton
-                    color="primary"
-                    onClick={() => handleAvaliarClick(config._id)}
-                  >
+                  <IconButton color="primary" onClick={() => handleAvaliarClick(config._id)}>
                     <StarIcon />
                   </IconButton>
                 </TableCell>
