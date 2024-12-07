@@ -23,7 +23,7 @@ import {
 import StarIcon from "@mui/icons-material/Star";
 import { useForm } from "react-hook-form";
 
-const AvaliacaoDialog = ({ open, onClose, configuracaoId }) => {
+const AvaliacaoDialog = ({ open, onClose, configuracaoId, fetchData }) => {
   const { register, handleSubmit, formState: { errors } } = useForm();
 
   const onSubmit = async (data) => {
@@ -33,10 +33,8 @@ const AvaliacaoDialog = ({ open, onClose, configuracaoId }) => {
         alert("User não autenticado.");
         return;
       }
-      // LOCAL
-      // const response = await fetch("http://localhost:3000/api/v1/avaliacao", {
-      // REMOTE
-      const response = await fetch("https://sommelierpath-2.onrender.com/api/v1/avaliacao", {
+
+      const response = await fetch("http://localhost:3000/api/v1/avaliacao", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -51,6 +49,7 @@ const AvaliacaoDialog = ({ open, onClose, configuracaoId }) => {
 
       alert("Avaliação criada com sucesso!");
       onClose();
+      fetchData(); // Refetch data to update the list
     } catch (error) {
       console.error("Erro ao criar avaliação:", error);
       alert("Erro ao criar avaliação.");
@@ -95,49 +94,47 @@ const Avaliacao = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedConfiguracaoId, setSelectedConfiguracaoId] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
+  const fetchData = async () => {
+    try {
+      setLoading(true);
 
-        const token = localStorage.getItem("token");
-        const userId = localStorage.getItem("userId");
-        if (!token || !userId) {
-          alert("User não autenticado.");
-          setLoading(false);
-          return;
-        }
-
-        const [avaliacoesResp, configuracoesResp] = await Promise.all([
-          // LOCAL axios.get("http://localhost:3000/api/v1/avaliacao", {
-          axios.get("https://sommelierpath-2.onrender.com/v1/avaliacao", {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          //LOCAL axios.get("http://localhost:3000/api/v1/configuracao", {
-          axios.get("https://sommelierpath-2.onrender.com/api/v1/configuracao", {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-        ]);
-
-        const avaliacoes = avaliacoesResp.data.filter(
-          (avaliacao) => avaliacao.userId === userId
-        );
-
-        const unfinishedConfiguracoes = configuracoesResp.data.filter(
-          (config) =>
-            config.finalizado === "false" &&
-            !avaliacoes.some((avaliacao) => avaliacao.configuracaoId === config._id)
-        );
-
-        setAvaliacoes(avaliacoes);
-        setConfiguracoes(unfinishedConfiguracoes);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
+      const token = localStorage.getItem("token");
+      const userId = localStorage.getItem("userId");
+      if (!token || !userId) {
+        alert("User não autenticado.");
         setLoading(false);
+        return;
       }
-    };
 
+      const [avaliacoesResp, configuracoesResp] = await Promise.all([
+        axios.get("http://localhost:3000/api/v1/avaliacao", {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        axios.get("http://localhost:3000/api/v1/configuracao", {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+      ]);
+
+      const avaliacoes = avaliacoesResp.data.filter(
+        (avaliacao) => avaliacao.userId === userId
+      );
+
+      const unfinishedConfiguracoes = configuracoesResp.data.filter(
+        (config) =>
+          config.finalizado === "false" &&
+          !avaliacoes.some((avaliacao) => avaliacao.configuracaoId === config._id)
+      );
+
+      setAvaliacoes(avaliacoes);
+      setConfiguracoes(unfinishedConfiguracoes);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -214,6 +211,7 @@ const Avaliacao = () => {
         open={dialogOpen}
         onClose={handleCloseDialog}
         configuracaoId={selectedConfiguracaoId}
+        fetchData={fetchData} // Pass fetchData to dialog
       />
     </Box>
   );

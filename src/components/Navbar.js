@@ -48,6 +48,15 @@ const Navbar = ({ onLogout }) => {
             Avaliação
           </NavLink>
         </li>
+        <li className="navItem">
+          <NavLink
+            to="/feedback"
+            className="navLink"
+            activeClassName="activeLink" // Class that will be added when the link is active
+          >
+            Feedback
+          </NavLink>
+        </li>
 
         <li className="navItem">
           <button onClick={onLogout} className="logoutButton">

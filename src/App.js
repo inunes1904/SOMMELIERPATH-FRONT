@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import Home from './components/Home';
 import Configuracao from './components/Configuracao';
 import Avaliacao from './components/Avaliacao';
+import Feedback from './components/Feedback';
 import Register from './components/Register'; // Import Register component
 
 const App = () => {
@@ -45,6 +46,10 @@ const App = () => {
         <Route
           path="/avaliacao"
           element={isLoggedIn ? <Avaliacao /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/feedback"
+          element={isLoggedIn ? <Feedback /> : <Navigate to="/login" />}
         />
       </Routes>
     </Router>
