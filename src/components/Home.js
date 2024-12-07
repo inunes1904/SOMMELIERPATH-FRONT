@@ -114,7 +114,7 @@ const Home = () => {
 
 const styles = {
   container: {
-    width: "75%",
+    width: "70%",
     margin: "50px auto",
     padding: "20px",
     lineHeight: "1.6",
