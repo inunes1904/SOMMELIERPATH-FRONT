@@ -22,6 +22,7 @@ import {
 import CommentIcon from '@mui/icons-material/Comment';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ConstructionIcon from '@mui/icons-material/Construction';
+import CustomAlert from "./CustomAlert";
 
 const FeedbackDialog = ({ open, onClose, avaliacao, feedback }) => {
   return (
@@ -91,6 +92,13 @@ const Feedback = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedAvaliacao, setSelectedAvaliacao] = useState(null); // Store the selected avaliação
   const [selectedFeedback, setSelectedFeedback] = useState(null); // Store the selected avaliação
+  const [alert, setAlert] = useState({ open: false, message: "", type: "" });
+  const showAlert = (message, type) => {
+    setAlert({ open: true, message, type });
+  };
+  const handleCloseAlert = () => {
+    setAlert({ ...alert, open: false });
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -100,16 +108,22 @@ const Feedback = () => {
         const token = localStorage.getItem("token");
         const userId = localStorage.getItem("userId");
         if (!token || !userId) {
-          alert("User não autenticado.");
+          showAlert("User não autenticado.", "error");
           setLoading(false);
           return;
         }
 
         const [avaliacoesResp, configuracoesResp] = await Promise.all([
-          axios.get("http://localhost:3000/api/v1/avaliacao", {
+          // REMOTE
+          axios.get("https://sommelierpath-2.onrender.com/api/v1/avaliacao", {
+          // LOCAL
+          // axios.get("http://localhost:3000/api/v1/avaliacao", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          axios.get("http://localhost:3000/api/v1/configuracao", {
+          // REMOTE
+          axios.get("https://sommelierpath-2.onrender.com/api/v1/configuracao", {
+          // LOCAL
+          // axios.get("http://localhost:3000/api/v1/configuracao", {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -150,19 +164,23 @@ const Feedback = () => {
       );
 
       if (!avaliacao) {
-        alert("Nenhuma avaliação encontrada para esta configuração.");
+        showAlert("Nenhuma avaliação encontrada para esta configuração.","error");
         return;
       }
 
       // Fetch Avaliação and Feedback concurrently
       const [avaliacaoResponse, feedbackResponse] = await Promise.all([
-        fetchWithAuth(`http://localhost:3000/api/v1/avaliacao/${avaliacao._id}`),
-        fetchWithAuth(`http://localhost:3000/api/v1/feedback/avaliacao/${avaliacao._id}`),
+        // LOCAL
+        // fetchWithAuth(`http://localhost:3000/api/v1/avaliacao/${avaliacao._id}`),
+        // fetchWithAuth(`http://localhost:3000/api/v1/feedback/avaliacao/${avaliacao._id}`),
+        // REMOTE
+        fetchWithAuth(`https://sommelierpath-2.onrender.com/api/v1/avaliacao/${avaliacao._id}`),
+        fetchWithAuth(`https://sommelierpath-2.onrender.com/api/v1/feedback/avaliacao/${avaliacao._id}`),
       ]);
 
       // Validate responses
       if (!avaliacaoResponse.data || !feedbackResponse.data) {
-        alert("Erro ao carregar dados de avaliação ou feedback.");
+        showAlert("Erro ao carregar dados de avaliação ou feedback.","error");
         return;
       }
 
@@ -174,7 +192,7 @@ const Feedback = () => {
       setDialogOpen(true);
     } catch (error) {
       console.error("Erro na request da avaliação ou feedback:", error);
-      alert(error.message || "Erro avaliação ou feedback.");
+      showAlert(error.message || "Erro avaliação ou feedback.","error");
     }
   };
 
@@ -248,6 +266,12 @@ const Feedback = () => {
         onClose={handleCloseDialog}
         avaliacao={selectedAvaliacao}
         feedback={selectedFeedback}
+      />
+      <CustomAlert
+        open={alert.open}
+        message={alert.message}
+        type={alert.type}
+        onClose={handleCloseAlert}
       />
     </Box>
   );

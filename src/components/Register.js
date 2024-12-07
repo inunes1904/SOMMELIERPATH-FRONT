@@ -18,9 +18,9 @@ const Register = () => {
 
     try {
       // LOCAL
-      const response = await axios.post('http://localhost:3000/api/v1/users', {
+      // const response = await axios.post('http://localhost:3000/api/v1/users', {
       // REMOTE
-      // const response = await axios.post('https://sommelierpath-2.onrender.com/api/v1/users', {
+      const response = await axios.post('https://sommelierpath-2.onrender.com/api/v1/users', {
         name,
         email,
         password,
