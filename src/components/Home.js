@@ -80,25 +80,29 @@ const Home = () => {
       {userRole === "user" && (
         <>
           <h2 style={styles.sectionTitle}>Como Começar</h2>
-          <ol>
-            <li>
-              Navegue até à secção{" "}
-              <span style={styles.highlight}>Avaliação</span> para realizar a
-              sua apreciação do vinho respetivo.
-            </li>
-            <li>
-              Utilize o <span style={styles.highlight}>Formulário</span> para
-              introduzir as notas que pretende atribuir.
-            </li>
-            <li>
-              Guarde e reveja vá à secção{" "}
-              <span style={styles.highlight}>Feedback</span> para ter acesso à
-              sua nota bem como o feedback.
-            </li>
-          </ol>
         </>
       )}
-
+      {userRole === "admin" || userRole === 'sommelier' && (
+        <>
+          <h2 style={styles.sectionTitle}>Como Continuar</h2>
+        </>
+      )}
+      <ol>
+        <li>
+          Navegue até à secção{" "}
+          <span style={styles.highlight}>Avaliação</span> para realizar a
+          sua apreciação do vinho respetivo.
+        </li>
+        <li>
+          Utilize o <span style={styles.highlight}>Formulário</span> para
+          introduzir as notas que pretende atribuir.
+        </li>
+        <li>
+          Guarde e reveja vá à secção{" "}
+          <span style={styles.highlight}>Feedback</span> para ter acesso à
+          sua nota bem como o feedback.
+        </li>
+      </ol>
       <p>
         Quer seja um sommelier experiente ou um entusiasta de vinhos casual, o
         Sommelier Path permite-lhe criar eventos de prova de vinhos memoráveis,
