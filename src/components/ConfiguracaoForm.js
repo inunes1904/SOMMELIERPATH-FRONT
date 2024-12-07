@@ -12,7 +12,7 @@ const ConfiguracaoForm = () => {
 
       // Ensure the user is authenticated
       if (!token) {
-        alert('Usuário não está autenticado.');
+        alert('User não está autenticado.');
         return;
       }
 

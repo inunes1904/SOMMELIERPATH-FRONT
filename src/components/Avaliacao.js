@@ -36,7 +36,7 @@ const AvaliacaoDialog = ({ open, onClose, configuracaoId }) => {
       // LOCAL
       // const response = await fetch("http://localhost:3000/api/v1/avaliacao", {
       // REMOTE
-      const response = await fetch("http://localhost:3000/api/v1/avaliacao", {
+      const response = await fetch("https://sommelierpath-2.onrender.com/api/v1/avaliacao", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
