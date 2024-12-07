@@ -1,14 +1,26 @@
+import React, { useEffect, useState } from 'react';
+
 const Home = () => {
+  const [userRole, setUserRole] = useState('');
+
+  useEffect(() => {
+    // Fetch role from localStorage or API
+    const token = localStorage.getItem('token');
+    if (token) {
+      const payload = JSON.parse(atob(token.split('.')[1])); // Decode JWT payload
+      setUserRole(payload.role); // Assuming 'role' is part of the payload
+    }
+  }, []);
+
   return (
     <div style={styles.container}>
       <h1>Bem-vindo ao Sommelier Path - Ferramenta de Configuração de Provas de Vinho</h1>
       <p>
-        O <span style={styles.highlight}>Caminho do Sommelier</span> é uma ferramenta intuitiva concebida para ajudar os
+        O <span style={styles.highlight}>SOMMPATH</span> é uma ferramenta intuitiva concebida para ajudar os
         entusiastas e profissionais do vinho a criar e personalizar experiências de prova de vinhos. Quer esteja a
         organizar um evento de degustação de vinhos ou a criar um guia de degustação pessoal, o Sommelier Path
         permite-lhe configurar todos os aspetos da experiência de degustação. Desde a seleção de tipos de vinho e
-        definição do peso do aroma até ao fornecimento de dicas de temperatura, a nossa ferramenta dá-lhe controlo total
-        sobre os detalhes do seu evento.
+        definição do peso do aroma, a nossa ferramenta dá-lhe controlo total sobre os detalhes do seu evento.
       </p>
 
       <h2 style={styles.sectionTitle}>Caraterísticas Principais</h2>
@@ -22,27 +34,48 @@ const Home = () => {
           local para atender às necessidades específicas do seu evento.
         </li>
         <li>
-          <span style={styles.highlight}>Sugestões de vinhos e combinações:</span> Adicione dicas de temperatura e
-          sugestões de harmonização para melhorar a experiência de degustação.
-        </li>
-        <li>
           <span style={styles.highlight}>Métodos de degustação personalizados:</span> Escolha entre vários métodos de
           degustação e níveis de apreciação adequados a diferentes estilos de degustação de vinhos.
         </li>
       </ul>
+      {(userRole === 'admin' || userRole === 'sommelier') && (
+        <h2 style={styles.sectionTitle}>Como Começar</h2>
+      )}
+      {(userRole === 'admin' || userRole === 'sommelier') && (
+        <ol>
+          <li>
+            Navegue até à secção <span style={styles.highlight}>Configuração</span> para criar a sua configuração de
+            prova personalizada.
+          </li>
+          <li>
+            Utilize o <span style={styles.highlight}>Formulário</span> para introduzir detalhes como o tipo de vinho, as
+            preferências de aroma e a duração da prova.
+          </li>
+          <li>
+            Guarda e espere que façam as avaliações ao vinho.
+          </li>
+        </ol>
 
-      <h2 style={styles.sectionTitle}>Como Começar</h2>
+      )}
+
+      {(userRole === 'user') (
+        <h2 style={styles.sectionTitle}>Como Começar</h2>
+      )}
+
+      {(userRole === 'user' || userRole === 'sommelier') && (
+        <h2 style={styles.sectionTitle}>Como continuar</h2>
+      )}
       <ol>
         <li>
-          Navegue até à secção <span style={styles.highlight}>Configuração</span> para criar a sua configuração de prova
-          personalizada.
+        Navegue até à secção <span style={styles.highlight}>Avaliação</span> para realizar a sua apreciação do
+          vinho respetivo.
         </li>
         <li>
-          Utilize o <span style={styles.highlight}>Formulário</span> para introduzir detalhes como o tipo de vinho, as
-          preferências de aroma e a duração da prova.
+          Utilize o <span style={styles.highlight}>Formulário</span> para introduzir as notas que pretende atribuir.
         </li>
         <li>
-          Guarde e reveja as suas configurações para garantir que cumprem as suas especificações exatas.
+          Guarde e reveja vá à secção <span style={styles.highlight}>Feedback</span> para ter acesso à sua nota bem como
+          o feedback.
         </li>
       </ol>
 
