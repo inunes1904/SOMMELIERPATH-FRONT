@@ -21,13 +21,15 @@ const ConfiguracaoForm = () => {
       const token = localStorage.getItem('token');
 
       if (!token) {
-        alert('User não está autenticado.');
+        showAlert('User não está autenticado.', "error");
         return;
       }
 
       console.log('Sending data:', data);
-
-      const response = await fetch('http://localhost:3000/api/v1/configuracao', {
+      // REMOTE
+      const response = await fetch('https://sommelierpath-2.onrender.com/api/v1/configuracao', {
+      // LOCAL
+      // const response = await fetch('http://localhost:3000/api/v1/configuracao', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

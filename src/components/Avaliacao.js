@@ -53,10 +53,16 @@ const Avaliacao = () => {
       }
 
       const [avaliacoesResp, configuracoesResp] = await Promise.all([
-        axios.get("http://localhost:3000/api/v1/avaliacao", {
+        // REMOTE
+        axios.get("https://sommelierpath-2.onrender.com/api/v1/avaliacao", {
+        // LOCAL
+        // axios.get("http://localhost:3000/api/v1/avaliacao", {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        axios.get("http://localhost:3000/api/v1/configuracao", {
+        // REMOTE
+        axios.get("https://sommelierpath-2.onrender.com/api/v1/configuracao", {
+        // LOCAL
+        // axios.get("http://localhost:3000/api/v1/configuracao", {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
@@ -105,8 +111,10 @@ const Avaliacao = () => {
           showParentAlert("User não autenticado.", "error");
           return;
         }
-
-        const response = await fetch("http://localhost:3000/api/v1/avaliacao", {
+        // REMOTE
+        const response = await fetch("https://sommelierpath-2.onrender.com/api/v1/avaliacao", {
+        // LOCAL
+        // const response = await fetch("http://localhost:3000/api/v1/avaliacao", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
