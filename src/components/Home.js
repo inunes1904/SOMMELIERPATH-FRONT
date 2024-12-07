@@ -114,7 +114,7 @@ const Home = () => {
 
 const styles = {
   container: {
-    maxWidth: "800px",
+    width: "75%",
     margin: "50px auto",
     padding: "20px",
     lineHeight: "1.6",
