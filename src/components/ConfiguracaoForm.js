@@ -19,7 +19,8 @@ const ConfiguracaoForm = () => {
       console.log('Sending data:', data);
 
       // Send data without userId (let backend handle userId from token)
-      const response = await fetch('http://localhost:3000/api/v1/configuracao', {
+      // LOCAL const response = await fetch('http://localhost:3000/api/v1/configuracao', {
+      const response = await fetch('https://sommelierpath-2.onrender.com/api/v1/configuracao', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

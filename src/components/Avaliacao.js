@@ -33,7 +33,9 @@ const AvaliacaoDialog = ({ open, onClose, configuracaoId }) => {
         alert("User não autenticado.");
         return;
       }
-
+      // LOCAL
+      // const response = await fetch("http://localhost:3000/api/v1/avaliacao", {
+      // REMOTE
       const response = await fetch("http://localhost:3000/api/v1/avaliacao", {
         method: "POST",
         headers: {
@@ -107,10 +109,12 @@ const Avaliacao = () => {
         }
 
         const [avaliacoesResp, configuracoesResp] = await Promise.all([
-          axios.get("http://localhost:3000/api/v1/avaliacao", {
+          // LOCAL axios.get("http://localhost:3000/api/v1/avaliacao", {
+          axios.get("https://sommelierpath-2.onrender.com/v1/avaliacao", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          axios.get("http://localhost:3000/api/v1/configuracao", {
+          //LOCAL axios.get("http://localhost:3000/api/v1/configuracao", {
+          axios.get("https://sommelierpath-2.onrender.com/api/v1/configuracao", {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
