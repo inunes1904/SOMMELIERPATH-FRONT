@@ -1,14 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { TextField, Checkbox, FormControlLabel, Button, Grid, Card, CardContent, Typography, Box } from '@mui/material';
 import CustomAlert from "./CustomAlert";
+
+// Observer Pattern: AlertSubject and AlertObserver
+class AlertSubject {
+  constructor() {
+    this.observers = [];
+  }
+
+  subscribe(observer) {
+    this.observers.push(observer);
+  }
+
+  unsubscribe(observer) {
+    this.observers = this.observers.filter(obs => obs !== observer);
+  }
+
+  notify(data) {
+    this.observers.forEach(observer => observer.update(data));
+  }
+}
+
+class AlertObserver {
+  constructor(updateCallback) {
+    this.update = updateCallback;
+  }
+}
+
+const alertSubject = new AlertSubject();
 
 const ConfiguracaoForm = () => {
   const [alert, setAlert] = useState({ open: false, message: "", type: "" });
 
   const showAlert = (message, type) => {
-    setAlert({ open: true, message, type });
+    alertSubject.notify({ open: true, message, type });
   };
+
+  useEffect(() => {
+    const alertObserver = new AlertObserver((data) => {
+      setAlert(data);
+    });
+
+    alertSubject.subscribe(alertObserver);
+
+    // Cleanup on unmount
+    return () => alertSubject.unsubscribe(alertObserver);
+  }, []);
 
   const handleCloseAlert = () => {
     setAlert({ ...alert, open: false });
@@ -26,14 +64,11 @@ const ConfiguracaoForm = () => {
       }
 
       console.log('Sending data:', data);
-      // REMOTE
       const response = await fetch('https://sommelierpath-2.onrender.com/api/v1/configuracao', {
-      // LOCAL
-      // const response = await fetch('http://localhost:3000/api/v1/configuracao', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          authorization: `Bearer ${token}`, // Token in Authorization header
+          authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(data),
       });
@@ -71,7 +106,7 @@ const ConfiguracaoForm = () => {
         component="h1"
         align="center"
         gutterBottom
-        sx={{ color: 'darkblue', marginBottom: 4 }}
+        sx={{ color: 'darkblue', marginBottom: 4, marginTop: 4 }}
       >
         Criar Configuração de Degustação
       </Typography>
