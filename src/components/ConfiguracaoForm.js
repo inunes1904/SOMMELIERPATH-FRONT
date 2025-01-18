@@ -64,6 +64,9 @@ const ConfiguracaoForm = () => {
       }
 
       console.log('Sending data:', data);
+      // LOCAL
+      // const response = await fetch('http://localhost:3000/api/v1/deploy-atividade', {
+      // REMOTE
       const response = await fetch('https://sommelierpath-2.onrender.com/api/v1/deploy-atividade', {
         method: 'POST',
         headers: {
