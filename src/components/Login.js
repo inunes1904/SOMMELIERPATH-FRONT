@@ -14,10 +14,7 @@ const Login = ({ onLogin }) => {
     setSuccess('');
 
     try {
-      // LOCAL
-      // const response = await axios.post('http://localhost:3000/api/v1/login', {
-      // REMOTE SERVER
-      const response = await axios.post('https://sommelierpath-2.onrender.com/api/v1/login', {
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/login`, {
         email,
         password,
       });

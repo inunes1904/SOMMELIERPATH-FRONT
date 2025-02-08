@@ -24,6 +24,7 @@ import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ConstructionIcon from '@mui/icons-material/Construction';
 import CustomAlert from "./CustomAlert";
 
+
 const FeedbackDialog = ({ open, onClose, avaliacao, feedback }) => {
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
@@ -114,16 +115,11 @@ const Feedback = () => {
         }
 
         const [avaliacoesResp, configuracoesResp] = await Promise.all([
-          // REMOTE
-          axios.get("https://sommelierpath-2.onrender.com/api/v1/avaliacao", {
-          // LOCAL
-          // axios.get("http://localhost:3000/api/v1/avaliacao", {
+          axios.get(`${process.env.REACT_APP_API_BASE_URL}/avaliacao`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
           // REMOTE
-          axios.get("https://sommelierpath-2.onrender.com/api/v1/configuracao", {
-          // LOCAL
-          // axios.get("http://localhost:3000/api/v1/configuracao", {
+          axios.get(`${process.env.REACT_APP_API_BASE_URL}/configuracao`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -168,14 +164,9 @@ const Feedback = () => {
         return;
       }
 
-      // Fetch Avaliação and Feedback concurrently
       const [avaliacaoResponse, feedbackResponse] = await Promise.all([
-        // LOCAL
-        // fetchWithAuth(`http://localhost:3000/api/v1/avaliacao/${avaliacao._id}`),
-        // fetchWithAuth(`http://localhost:3000/api/v1/feedback/avaliacao/${avaliacao._id}`),
-        // REMOTE
-        fetchWithAuth(`https://sommelierpath-2.onrender.com/api/v1/avaliacao/${avaliacao._id}`),
-        fetchWithAuth(`https://sommelierpath-2.onrender.com/api/v1/feedback/avaliacao/${avaliacao._id}`),
+        fetchWithAuth(`${process.env.REACT_APP_API_BASE_URL}/v1/avaliacao/${avaliacao._id}`),
+        fetchWithAuth(`${process.env.REACT_APP_API_BASE_URL}/feedback/avaliacao/${avaliacao._id}`),
       ]);
 
       // Validate responses
